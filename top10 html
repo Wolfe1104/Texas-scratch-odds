@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Top 10 - Texas Scratch Odds</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: url('https://www.shutterstock.com/image-vector/set-golden-scratchy-scratchcard-textures-260nw-2480142555.jpg') fixed; color: white; }
+    .card { background: rgba(0,0,0,0.7); border: 2px solid gold; }
+  </style>
+</head>
+<body>
+  <!-- Same navbar as index.html -->
+  <nav class="navbar navbar-dark bg-dark"> <!-- copy navbar code from index.html --> </nav>
+
+  <div class="container py-5">
+    <h1 class="text-center mb-5" style="text-shadow: 0 0 15px gold;">Top 10 Hottest Scratch-Offs</h1>
+    <div id="top10" class="row row-cols-1 row-cols-md-2 g-4"></div>
+    <p class="text-center mt-4">Sorted by best current odds of hitting the top prize (fewer claimed = better odds)</p>
+  </div>
+
+  <script src="data.js"></script>
+  <script>
+    // Sort by best top prize odds (lowest number = better)
+    const sorted = [...tickets].filter(t => t.remainingTop > 0)
+                              .sort((a,b) => parseInt(a.currentTopOdds) - parseInt(b.currentTopOdds))
+                              .slice(0,10);
+
+    const container = document.getElementById('top10');
+    sorted.forEach(t => {
+      container.innerHTML += `
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">${t.name}</h5>
+              <p><strong>Price:</strong> \[ {t.price}<br>
+                 <strong>Top Prize:</strong> \]{t.topPrize.toLocaleString()}<br>
+                 <strong>Remaining Top Prizes:</strong> ${t.remainingTop}<br>
+                 <strong>Current Odds for Top:</strong> 1 in ${t.currentTopOdds}</p>
+            </div>
+          </div>
+        </div>`;
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
