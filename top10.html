@@ -1,66 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Top 10 - Texas Scratch Odds</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://www.shutterstock.com/image-vector/set-golden-scratchy-scratchcard-textures-260nw-2480142555.jpg') fixed center/cover; color: white; }
-    .card { background: rgba(0,0,0,0.8); border: 3px solid gold; }
-    .ticket-img { max-height: 180px; object-fit: contain; border-bottom: 2px solid gold; }
-    h1 { text-shadow: 0 0 20px gold; }
-  </style>
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="index.html">Texas Scratch Odds</a>
-      <div class="dropdown ms-auto">
-        <button class="btn btn-warning dropdown-toggle" type="button" data-bs-toggle="dropdown">Menu</button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="index.html">Home</a></li>
-          <li><a class="dropdown-item" href="top10.html">Top 10 Hottest</a></li>
-          <li><a class="dropdown-item" href="all.html">All Tickets</a></li>
-          <li><a class="dropdown-item" href="#">About</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+<script src="data.js"></script>
+<script>
+  // Filter active games and sort by your criteria
+  const sorted = [...tickets]
+    .filter(t => t.profitPrizesRemaining > 0 && t.estRemainingTickets > 0)
+    .sort((a, b) => {
+      // Primary: most profit prizes remaining
+      if (b.profitPrizesRemaining !== a.profitPrizesRemaining) {
+        return b.profitPrizesRemaining - a.profitPrizesRemaining;
+      }
+      // Tiebreaker: fewest remaining tickets (hotter when running low)
+      return a.estRemainingTickets - b.estRemainingTickets;
+    })
+    .slice(0, 10);
 
-  <div class="container py-5">
-    <h1 class="text-center mb-5">Top 10 Hottest Scratch-Offs Right Now</h1>
-    <p class="text-center lead mb-5">Sorted by best current odds of hitting the top prize (based on remaining top prizes)</p>
-    <div id="top10" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
-  </div>
-
-  <script src="data.js"></script>
-  <script>
-    const sorted = [...tickets]
-      .filter(t => t.remainingTop > 0)
-      .sort((a, b) => parseInt(a.currentTopOdds.replace(/,/g, '')) - parseInt(b.currentTopOdds.replace(/,/g, '')))
-      .slice(0, 10);
-
-    const container = document.getElementById('top10');
-    sorted.forEach(t => {
-      container.innerHTML += `
-        <div class="col">
-          <div class="card h-100 text-white">
-            <img src="\( {t.image}" class="card-img-top ticket-img" alt=" \){t.name}">
-            <div class="card-body">
-              <h5 class="card-title">${t.name}</h5>
-              <p class="card-text">
-                <strong>Price:</strong> \[ {t.price}<br>
-                <strong>Top Prize:</strong> \]{t.topPrize.toLocaleString()}<br>
-                <strong>Remaining Top:</strong> ${t.remainingTop}<br>
-                <strong>Current Odds (1 in):</strong> ${t.currentTopOdds}<br>
-                <strong>Overall Odds:</strong> ${t.overallOdds}
-              </p>
-            </div>
+  const container = document.getElementById('top10');
+  sorted.forEach(t => {
+    container.innerHTML += `
+      <div class="col">
+        <div class="card h-100 text-white">
+          <img src="\( {t.image}" class="card-img-top ticket-img" alt=" \){t.name}">
+          <div class="card-body">
+            <h5 class="card-title">${t.name}</h5>
+            <p class="card-text">
+              <strong>Price:</strong> \[ {t.price}<br>
+              <strong>Top Prize:</strong> \]{t.topPrize.toLocaleString()}<br>
+              <strong>Remaining Top:</strong> ${t.remainingTop}<br>
+              <strong>Profit Prizes Left (> price):</strong> ${t.profitPrizesRemaining.toLocaleString()}<br>
+              <strong>Est. Tickets Left:</strong> ${t.estRemainingTickets.toLocaleString()}<br>
+              <strong>Current Top Odds:</strong> 1 in ${t.currentTopOdds}
+            </p>
+            <span class="badge bg-danger">HOT: Great profit prizes + low tickets left!</span>
           </div>
-        </div>`;
-    });
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        </div>
+      </div>`;
+  });
+
+  // Update page title/description
+  document.querySelector('h1').innerText = "Top 10 Hottest Scratch-Offs (Best Profit Potential)";
+  document.querySelector('p.lead').innerHTML = "Ranked by most remaining prizes worth more than ticket price<br>with tiebreaker: fewest tickets left (running out = better value now!)";
+</script>
