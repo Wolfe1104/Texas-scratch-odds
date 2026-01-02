@@ -1,15 +1,12 @@
 <script src="data.js"></script>
 <script>
-  // Filter active games and sort by your criteria
   const sorted = [...tickets]
-    .filter(t => t.profitPrizesRemaining > 0 && t.estRemainingTickets > 0)
+    .filter(t => t.profitPrizesRemaining > 0 && t.estRemainingTickets > 0 && t.remainingTop > 0)
     .sort((a, b) => {
-      // Primary: most profit prizes remaining
       if (b.profitPrizesRemaining !== a.profitPrizesRemaining) {
-        return b.profitPrizesRemaining - a.profitPrizesRemaining;
+        return b.profitPrizesRemaining - a.profitPrizesRemaining; // Most profit prizes first
       }
-      // Tiebreaker: fewest remaining tickets (hotter when running low)
-      return a.estRemainingTickets - b.estRemainingTickets;
+      return a.estRemainingTickets - b.estRemainingTickets; // Then fewest tickets left
     })
     .slice(0, 10);
 
@@ -18,24 +15,20 @@
     container.innerHTML += `
       <div class="col">
         <div class="card h-100 text-white">
-          <img src="\( {t.image}" class="card-img-top ticket-img" alt=" \){t.name}">
+          <img src="\( {t.image}" class="card-img-top ticket-img" alt=" \){t.name}" onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'">
           <div class="card-body">
             <h5 class="card-title">${t.name}</h5>
             <p class="card-text">
-              <strong>Price:</strong> \[ {t.price}<br>
+              <strong>Price:</strong> \[ {t.price.toLocaleString()}<br>
               <strong>Top Prize:</strong> \]{t.topPrize.toLocaleString()}<br>
-              <strong>Remaining Top:</strong> ${t.remainingTop}<br>
-              <strong>Profit Prizes Left (> price):</strong> ${t.profitPrizesRemaining.toLocaleString()}<br>
+              <strong>Remaining Top Prizes:</strong> ${t.remainingTop}<br>
+              <strong>Profit Prizes Left (>$ price):</strong> ${t.profitPrizesRemaining.toLocaleString()}<br>
               <strong>Est. Tickets Left:</strong> ${t.estRemainingTickets.toLocaleString()}<br>
-              <strong>Current Top Odds:</strong> 1 in ${t.currentTopOdds}
+              <strong>Current Top Odds (1 in):</strong> ${t.currentTopOdds}
             </p>
-            <span class="badge bg-danger">HOT: Great profit prizes + low tickets left!</span>
+            <span class="badge bg-success fs-6">HOT TICKET!</span>
           </div>
         </div>
       </div>`;
   });
-
-  // Update page title/description
-  document.querySelector('h1').innerText = "Top 10 Hottest Scratch-Offs (Best Profit Potential)";
-  document.querySelector('p.lead').innerHTML = "Ranked by most remaining prizes worth more than ticket price<br>with tiebreaker: fewest tickets left (running out = better value now!)";
 </script>
